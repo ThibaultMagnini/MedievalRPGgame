@@ -25,6 +25,28 @@ class Player(pg.sprite.Sprite):
             self.player_sprites.append(pg.transform.flip(self.player_sprites[i], True, False)) 
 
 
+    def changeSprite(self):
+        if self.changesprite >= 3:
+            if self.image == self.player_sprites[0]:
+                self.image = self.player_sprites[1]
+            elif self.image == self.player_sprites[1]:
+                self.image = self.player_sprites[2]
+            elif self.image == self.player_sprites[2]:
+                self.image = self.player_sprites[3]
+            elif self.image == self.player_sprites[3]:
+                self.image = self.player_sprites[4]
+            elif self.image == self.player_sprites[4]:
+                self.image = self.player_sprites[5]
+            elif self.image == self.player_sprites[5]:
+                self.image = self.player_sprites[6]
+            elif self.image == self.player_sprites[6]:
+                self.image = self.player_sprites[7]
+            elif self.image == self.player_sprites[7]:
+                self.image = self.player_sprites[8]
+            elif self.image == self.player_sprites[8]:
+                self.image = self.player_sprites[0]
+            self.changesprite = 0
+
     # TODO optimize and clean player animation when walking 
     def get_keys(self):
         self.changesprite += 1
@@ -38,26 +60,7 @@ class Player(pg.sprite.Sprite):
                 self.rightdirection = False
 
             self.vel.x = -PLAYER_SPEED
-            if self.changesprite >= 3:
-                if self.image == self.player_sprites[0]:
-                    self.image = self.player_sprites[1]
-                elif self.image == self.player_sprites[1]:
-                    self.image = self.player_sprites[2]
-                elif self.image == self.player_sprites[2]:
-                    self.image = self.player_sprites[3]
-                elif self.image == self.player_sprites[3]:
-                    self.image = self.player_sprites[4]
-                elif self.image == self.player_sprites[4]:
-                    self.image = self.player_sprites[5]
-                elif self.image == self.player_sprites[5]:
-                    self.image = self.player_sprites[6]
-                elif self.image == self.player_sprites[6]:
-                    self.image = self.player_sprites[7]
-                elif self.image == self.player_sprites[7]:
-                    self.image = self.player_sprites[8]
-                elif self.image == self.player_sprites[8]:
-                    self.image = self.player_sprites[0]
-                self.changesprite = 0
+            self.changeSprite()
 
         if keys[pg.K_RIGHT] or keys[pg.K_d]:
             
@@ -90,49 +93,11 @@ class Player(pg.sprite.Sprite):
                 
         if keys[pg.K_UP] or keys[pg.K_w]:
             self.vel.y = -PLAYER_SPEED
-            if self.changesprite >= 3:
-                if self.image == self.player_sprites[0]:
-                    self.image = self.player_sprites[1]
-                elif self.image == self.player_sprites[1]:
-                    self.image = self.player_sprites[2]
-                elif self.image == self.player_sprites[2]:
-                    self.image = self.player_sprites[3]
-                elif self.image == self.player_sprites[3]:
-                    self.image = self.player_sprites[4]
-                elif self.image == self.player_sprites[4]:
-                    self.image = self.player_sprites[5]
-                elif self.image == self.player_sprites[5]:
-                    self.image = self.player_sprites[6]
-                elif self.image == self.player_sprites[6]:
-                    self.image = self.player_sprites[7]
-                elif self.image == self.player_sprites[7]:
-                    self.image = self.player_sprites[8]
-                elif self.image == self.player_sprites[8]:
-                    self.image = self.player_sprites[0]
-                self.changesprite = 0
+            self.changeSprite()
         
         if keys[pg.K_DOWN] or keys[pg.K_s]:
             self.vel.y = PLAYER_SPEED
-            if self.changesprite >= 3:
-                if self.image == self.player_sprites[0]:
-                    self.image = self.player_sprites[1]
-                elif self.image == self.player_sprites[1]:
-                    self.image = self.player_sprites[2]
-                elif self.image == self.player_sprites[2]:
-                    self.image = self.player_sprites[3]
-                elif self.image == self.player_sprites[3]:
-                    self.image = self.player_sprites[4]
-                elif self.image == self.player_sprites[4]:
-                    self.image = self.player_sprites[5]
-                elif self.image == self.player_sprites[5]:
-                    self.image = self.player_sprites[6]
-                elif self.image == self.player_sprites[6]:
-                    self.image = self.player_sprites[7]
-                elif self.image == self.player_sprites[7]:
-                    self.image = self.player_sprites[8]
-                elif self.image == self.player_sprites[8]:
-                    self.image = self.player_sprites[0]
-                self.changesprite = 0
+            self.changeSprite()
         
         if self.vel.x != 0 and self.vel.y != 0:
             self.vel *= 0.7071
