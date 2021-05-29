@@ -8,99 +8,92 @@ class Player(pg.sprite.Sprite):
         self.groups = game.all_sprites
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        self.player_sprites = game.player_sprites
-        self.image = self.player_sprites[0]
-        self.rect = self.image.get_rect()
+       
+        self.player_walkup = game.player_walkup
+        self.player_walkdown = game.player_walkdown
+        self.player_walk_left = game.player_walk_left
+        self.player_walk_right = game.player_walk_right
+        self.player_idleup = game.player_idleup
+        self.player_idledown = game.player_idledown
+        self.player_idle_left = game.player_idle_left
+        self.player_idle_right = game.player_idle_right
+
+        self.right = False
+        self.up = False
+        self.down = True
+        self.walking = False
+        
         self.vel = vec(0, 0)
         self.pos = vec(x, y)
+
+        self.image = self.player_walkdown[0]
+        self.rect = self.image.get_rect()
+
         self.changesprite = 0
-        self.rightdirection = False
+        self.currentframe = 1
 
         self.health = 100
         self.stamina = 100 
 
         self.inventory = Inventory(self)
 
-        for i in range(len(self.player_sprites)):
-            self.player_sprites.append(pg.transform.flip(self.player_sprites[i], True, False)) 
-
-
-    def changeSprite(self):
-        if self.changesprite >= 3:
-            if self.image == self.player_sprites[0]:
-                self.image = self.player_sprites[1]
-            elif self.image == self.player_sprites[1]:
-                self.image = self.player_sprites[2]
-            elif self.image == self.player_sprites[2]:
-                self.image = self.player_sprites[3]
-            elif self.image == self.player_sprites[3]:
-                self.image = self.player_sprites[4]
-            elif self.image == self.player_sprites[4]:
-                self.image = self.player_sprites[5]
-            elif self.image == self.player_sprites[5]:
-                self.image = self.player_sprites[6]
-            elif self.image == self.player_sprites[6]:
-                self.image = self.player_sprites[7]
-            elif self.image == self.player_sprites[7]:
-                self.image = self.player_sprites[8]
-            elif self.image == self.player_sprites[8]:
-                self.image = self.player_sprites[0]
-            self.changesprite = 0
-
-    # TODO optimize and clean player animation when walking 
     def get_keys(self):
-        self.changesprite += 1
         self.vel = vec(0, 0)
         keys = pg.key.get_pressed()
 
         if keys[pg.K_LEFT] or keys[pg.K_a]:
-
-            if self.rightdirection == True:
-                self.image = self.player_sprites[0]
-                self.rightdirection = False
-
+            self.walking = True
             self.vel.x = -PLAYER_SPEED
-            self.changeSprite()
+            if self.changesprite >= 10:
+                self.currentframe = (self.currentframe + 1) % len(self.player_walkdown)
+                self.changesprite = 0
+            self.image = self.player_walk_left[self.currentframe]
+            self.changesprite += 1
+            self.right = False
+            self.up = False
+            self.down = False
 
         if keys[pg.K_RIGHT] or keys[pg.K_d]:
-            
+            self.walking = True
             self.vel.x = PLAYER_SPEED
-
-            if self.rightdirection == False:
-                self.image = self.player_sprites[9]
-                self.rightdirection = True
-
-            if self.changesprite >= 3:
-                if self.image == self.player_sprites[9]:
-                    self.image = self.player_sprites[10]
-                elif self.image == self.player_sprites[10]:
-                    self.image = self.player_sprites[11]
-                elif self.image == self.player_sprites[11]:
-                    self.image = self.player_sprites[12]
-                elif self.image == self.player_sprites[12]:
-                    self.image = self.player_sprites[13]
-                elif self.image == self.player_sprites[13]:
-                    self.image = self.player_sprites[14]
-                elif self.image == self.player_sprites[14]:
-                    self.image = self.player_sprites[15]
-                elif self.image == self.player_sprites[15]:
-                    self.image = self.player_sprites[16]
-                elif self.image == self.player_sprites[16]:
-                    self.image = self.player_sprites[17]
-                elif self.image == self.player_sprites[17]:
-                    self.image = self.player_sprites[9]
+            if self.changesprite >= 10:
+                self.currentframe = (self.currentframe + 1) % len(self.player_walkdown)
                 self.changesprite = 0
-                
+            self.image = self.player_walk_right[self.currentframe]
+            self.changesprite += 1
+            self.right = True
+            self.up = False
+            self.down = False
+
         if keys[pg.K_UP] or keys[pg.K_w]:
+            self.walking = True
             self.vel.y = -PLAYER_SPEED
-            self.changeSprite()
-        
+            if self.changesprite >= 6:
+                self.currentframe = (self.currentframe + 1) % len(self.player_walkdown)
+                self.changesprite = 0
+            self.image = self.player_walkup[self.currentframe]
+            self.changesprite += 1
+            self.right = False
+            self.up = True
+            self.down = False
+
         if keys[pg.K_DOWN] or keys[pg.K_s]:
+            self.walking = True
             self.vel.y = PLAYER_SPEED
-            self.changeSprite()
+            if self.changesprite >= 6:
+                self.currentframe = (self.currentframe + 1) % len(self.player_walkdown)
+                self.changesprite = 0
+            self.image = self.player_walkdown[self.currentframe]
+            self.changesprite += 1
+            self.right = False
+            self.up = False
+            self.down = True
         
         if self.vel.x != 0 and self.vel.y != 0:
             self.vel *= 0.7071
+        
+        self.walking = False
+        
 
     def collide_with_walls_x(self):
         hits = pg.sprite.spritecollide(self, self.game.walls, False)
@@ -124,6 +117,26 @@ class Player(pg.sprite.Sprite):
 
 
     def update(self):
+        self.changesprite += 1
+        if not self.walking:
+            if self.changesprite >= 10:
+                if self.down:
+                    self.currentframe = (self.currentframe + 1) % len(self.player_idle_left)
+                    self.image = self.player_idledown[self.currentframe]
+                    self.changesprite = 0
+                elif self.right:
+                    self.currentframe = (self.currentframe + 1) % len(self.player_idle_left)
+                    self.image = self.player_idle_right[self.currentframe]
+                    self.changesprite = 0
+                elif self.up:
+                    self.currentframe = (self.currentframe + 1) % len(self.player_idle_left)
+                    self.image = self.player_idleup[self.currentframe]
+                    self.changesprite = 0
+                else:
+                    self.currentframe = (self.currentframe + 1) % len(self.player_idle_left)
+                    self.image = self.player_idle_left[self.currentframe]
+                    self.changesprite = 0
+
         self.get_keys()
         self.pos += self.vel * self.game.dt
         self.rect.x = self.pos.x

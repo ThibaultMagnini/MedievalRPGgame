@@ -5,11 +5,17 @@ class SpriteSheet:
     def __init__(self, filename):
         """Load the sheet."""
         try:
-            self.sheet = pg.image.load(filename).convert()
+            self.sheet = pg.image.load(filename).convert_alpha()
         except pg.error as e:
             print(f"Unable to load spritesheet image: {filename}")
             raise SystemExit(e)
 
+
+    def get_sprite(self, x, y, width, height):
+        image = pg.Surface((width, height))
+        image.blit(self.sheet, (0, 0), (x, y, width, height))
+        image = pg.transform.scale(image, (width * 2, height * 2))
+        return image
 
     def image_at(self, rectangle, colorkey = None):
         rect = pg.Rect(rectangle)

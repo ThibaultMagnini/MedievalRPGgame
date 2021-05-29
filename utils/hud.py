@@ -1,3 +1,4 @@
+from config import HEIGHT
 import pygame as pg
 vec = pg.math.Vector2
 
@@ -15,7 +16,10 @@ class Hud:
         self.tiles = self.create_inventory_hud()
 
     def draw(self, screen):
-
+        health = self.game.myfont.render(f"Health: {self.game.player.health}", False, (255, 255, 255))
+        stamina = self.game.myfont.render(f"Stamina: {self.game.player.stamina}", False, (255, 255, 255))
+        screen.blit(health, (20, HEIGHT - 80))
+        screen.blit(stamina, (20, HEIGHT - 50))
         screen.blit(self.inventory_surface, (self.width * 0.35, self.height * 0.89))
         counter = 1
         for tile in self.tiles:
@@ -24,7 +28,7 @@ class Hud:
             if tile["name"] in ["healingpot", "staminapot"]:
                 textsurface = self.game.myfont.render(str(self.game.player.inventory.inventory_slots[tile["name"]]), False, (0, 0, 0))
                 textsurface2 = self.game.myfontbutton.render(str(counter), False, (0, 0, 0))
-                screen.blit(textsurface, (tile["rect"].centerx - 4, tile["rect"].centery - 6))
+                screen.blit(textsurface, (tile["rect"].centerx - 8, tile["rect"].centery - 7))
                 screen.blit(textsurface2, tile["rect"].topright - vec(11,3))
                 counter += 1
 
