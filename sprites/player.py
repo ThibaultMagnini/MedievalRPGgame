@@ -1,41 +1,54 @@
 from sprites.inventory import Inventory
 import pygame as pg
 from config import *
+import random
 vec = pg.math.Vector2
 
 class Player(pg.sprite.Sprite):
-    def __init__(self, game, x, y):
+    def __init__(self, game, x, y, health=100, stamina=100, inventory=None):
         self.groups = game.all_sprites
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-       
+        self.name = 'Player'
+        self.alive = True
         self.player_walkup = game.player_walkup
         self.player_walkdown = game.player_walkdown
         self.player_walk_left = game.player_walk_left
         self.player_walk_right = game.player_walk_right
+        self.player_idle_right_combat = [pg.transform.scale(img, (img.get_width() * 3, img.get_height() * 3)) for img in game.player_idle_right]
         self.player_idleup = game.player_idleup
         self.player_idledown = game.player_idledown
         self.player_idle_left = game.player_idle_left
         self.player_idle_right = game.player_idle_right
+        self.player_attack_right = [pg.transform.scale(img, (img.get_width() * 3, img.get_height() * 3)) for img in game.player_attack_right]
 
         self.right = False
         self.up = False
         self.down = True
         self.walking = False
+        self.in_combat=False
+        self.attacking = False
         
         self.vel = vec(0, 0)
         self.pos = vec(x, y)
 
-        self.image = self.player_walkdown[0]
+        if not self.in_combat:
+            self.image = self.player_walkdown[0]
+        else:
+            self.image = self.player_idle_right_combat[0]
+            
         self.rect = self.image.get_rect()
 
         self.changesprite = 0
         self.currentframe = 1
 
-        self.health = 100
-        self.stamina = 100 
+        self.health = health
+        self.stamina = stamina
 
-        self.inventory = Inventory(self)
+        if inventory is None:
+            self.inventory = Inventory(self)
+        else:
+            self.inventory = inventory
 
     def get_keys(self):
         self.vel = vec(0, 0)
@@ -115,32 +128,66 @@ class Player(pg.sprite.Sprite):
             self.vel.y = 0
             self.rect.y = self.pos.y
 
+    def attack(self, target):
+        rand = random.randint(-5, 7)
+        damadge = self.inventory.getWeaponDamadge() + rand
+        stamina_drain = self.inventory.getWeaponStaminaUsage() + rand
+        if self.stamina > stamina_drain:
+            self.attacking = True
+            self.currentframe = 0
+            target.health -= damadge
+            self.stamina -= stamina_drain
+            if target.health <= 0:
+                target.alive = False
+        else:
+            if self.stamina + 30 < 100:
+                self.stamina += 30
+            else:
+                self.stamina += 100 - self.stamina
 
     def update(self):
         self.changesprite += 1
-        if not self.walking:
-            if self.changesprite >= 10:
-                if self.down:
-                    self.currentframe = (self.currentframe + 1) % len(self.player_idle_left)
-                    self.image = self.player_idledown[self.currentframe]
-                    self.changesprite = 0
-                elif self.right:
-                    self.currentframe = (self.currentframe + 1) % len(self.player_idle_left)
-                    self.image = self.player_idle_right[self.currentframe]
-                    self.changesprite = 0
-                elif self.up:
-                    self.currentframe = (self.currentframe + 1) % len(self.player_idle_left)
-                    self.image = self.player_idleup[self.currentframe]
-                    self.changesprite = 0
+        if not self.in_combat:
+            if not self.walking:
+                if self.changesprite >= 10:
+                    if self.down:
+                        self.currentframe = (self.currentframe + 1) % len(self.player_idle_left)
+                        self.image = self.player_idledown[self.currentframe]
+                        self.changesprite = 0
+                    elif self.right:
+                        self.currentframe = (self.currentframe + 1) % len(self.player_idle_left)
+                        self.image = self.player_idle_right[self.currentframe]
+                        self.changesprite = 0
+                    elif self.up:
+                        self.currentframe = (self.currentframe + 1) % len(self.player_idle_left)
+                        self.image = self.player_idleup[self.currentframe]
+                        self.changesprite = 0
+                    else:
+                        self.currentframe = (self.currentframe + 1) % len(self.player_idle_left)
+                        self.image = self.player_idle_left[self.currentframe]
+                        self.changesprite = 0
+        
+        elif self.in_combat:
+            if not self.walking:
+                if not self.attacking:
+                    if self.changesprite >= 10:
+                        self.currentframe = (self.currentframe + 1) % len(self.player_idle_left)
+                        self.image = self.player_idle_right_combat[self.currentframe]
+                        self.changesprite = 0
                 else:
-                    self.currentframe = (self.currentframe + 1) % len(self.player_idle_left)
-                    self.image = self.player_idle_left[self.currentframe]
-                    self.changesprite = 0
+                    if self.changesprite >= 10:
+                        self.currentframe = (self.currentframe + 1) % len(self.player_attack_right)
+                        if self.currentframe == 2:
+                            self.attacking = False
+                        self.image = self.player_attack_right[self.currentframe]
+                        self.changesprite = 0
 
-        self.get_keys()
-        self.pos += self.vel * self.game.dt
-        self.rect.x = self.pos.x
-        self.collide_with_walls_x()
-        self.rect.y = self.pos.y
-        self.collide_with_walls_y()
+        
+        if not self.in_combat:
+            self.get_keys()
+            self.pos += self.vel * self.game.dt
+            self.rect.x = self.pos.x
+            self.collide_with_walls_x()
+            self.rect.y = self.pos.y
+            self.collide_with_walls_y()
         

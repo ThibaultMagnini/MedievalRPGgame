@@ -51,3 +51,15 @@ class Inventory:
         if self.inventory_slots["staminapot"] > 0:
             self.player.stamina += 20
             self.inventory_slots["staminapot"] -= 1
+
+    def getWeaponDamadge(self):
+        if self.inventory_slots["Weapon"] == "No weapon":
+            return 10
+        else:
+            return self.inventory_slots["Weapon"].damadge
+
+    def getWeaponStaminaUsage(self):
+        if self.inventory_slots["Weapon"] == "No weapon":
+            return 20
+        else:
+            return self.inventory_slots["Weapon"].stamina_drain

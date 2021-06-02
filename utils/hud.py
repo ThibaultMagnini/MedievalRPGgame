@@ -1,4 +1,4 @@
-from config import HEIGHT
+from config import BLUE, GRAY, GREEN, HEIGHT, RED, WHITE
 import pygame as pg
 vec = pg.math.Vector2
 
@@ -92,3 +92,36 @@ class Hud:
             image = pg.transform.scale(image, (int(w), int(h)))
 
         return image
+
+class HealthBar:
+    def __init__(self, x, y, hp, max_hp, screen):
+        self.screen = screen
+        self.x = x
+        self.y = y
+        self.hp = hp
+        self.max_hp = max_hp
+
+    def draw(self, hp):
+        self.hp = hp
+        ratio = self.hp / self.max_hp
+        pg.draw.rect(self.screen, RED, (self.x, self.y, 200, 20))
+        for i in range(4):
+            pg.draw.rect(self.screen, GRAY, (self.x-i,self.y-i,203,23), 1)
+        pg.draw.rect(self.screen, GREEN, (self.x, self.y, 200 * ratio, 20))
+
+
+class StaminaBar:
+    def __init__(self, x, y, stamina, max_stamina, screen):
+        self.screen = screen
+        self.x = x
+        self.y = y
+        self.stamina = stamina
+        self.max_stamina = max_stamina
+
+    def draw(self, stamina):
+        self.stamina = stamina
+        ratio = self.stamina / self.max_stamina
+        pg.draw.rect(self.screen, RED, (self.x, self.y, 200, 20))
+        for i in range(4):
+            pg.draw.rect(self.screen, GRAY, (self.x-i,self.y-i,203,23), 1)
+        pg.draw.rect(self.screen, BLUE, (self.x, self.y, 200 * ratio, 20))

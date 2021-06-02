@@ -1,8 +1,14 @@
-from game import *
+from scenemanager import SceneManager
+import pygame as pg
+from config import *
 
-g = Game()
-g.show_start_screen()
+pg.init()
+pg.font.init()
+screen = pg.display.set_mode((WIDTH, HEIGHT))
+pg.display.set_caption(TITLE)
+manager = SceneManager(screen)
+
 while True:
-    g.new()
-    g.run()
-    g.show_go_screen()
+    manager.scene.new()
+    manager.scene.run()
+    
