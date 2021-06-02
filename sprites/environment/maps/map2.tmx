@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.5" tiledversion="1.6.0" orientation="orthogonal" renderorder="right-down" width="64" height="64" tilewidth="32" tileheight="32" infinite="0" nextlayerid="6" nextobjectid="59">
  <tileset firstgid="1" source="../MainLevBuild.tsx"/>
- <tileset firstgid="4097" source="../healthpotion.tsx"/>
  <layer id="1" name="ground" width="64" height="64">
   <data encoding="csv">
 2632,2501,2564,2631,2694,2436,2630,2436,2568,2440,2502,2438,2695,2504,2696,2501,2628,2503,2504,2499,2440,2692,2502,2436,2439,2438,2436,2502,2440,2501,2696,2503,2630,2437,2632,2436,2632,2566,2568,2629,2500,2692,2568,2693,2440,2504,2694,2437,2439,2567,2631,2631,2694,2437,2565,2500,2692,2695,2438,2499,2499,2631,2499,2628,

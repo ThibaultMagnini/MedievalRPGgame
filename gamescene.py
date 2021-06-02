@@ -1,8 +1,6 @@
 from sprites.enemy import Enemy
 from scene import Scene
 from sprites.items import HealingPotion, StaminaPotion
-from sprites.grass import Grass
-from utils.spritesheet import SpriteSheet
 from utils.camera import Camera
 import pygame as pg
 import sys
@@ -46,8 +44,6 @@ class Game(Scene):
         self.player_idledown = []
         self.player_idle_right = []
         self.player_idle_left = []
-        self.tree_sprites = []
-        self.grass_sprites = []
         self.player_attack_right = []
 
         self.player_walkup,self.player_walkdown, self.player_walk_right, self.player_walk_left, self.player_idleup, self.player_idledown, self.player_idle_right, self.player_idle_left, self.player_attack_right = load_character(sprites_character_folder, self.player_walkup,self.player_walkdown, self.player_walk_right, self.player_walk_left, self.player_idleup, self.player_idledown, self.player_idle_right, self.player_idle_left, self.player_attack_right)
